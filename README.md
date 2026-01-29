@@ -23,10 +23,16 @@ ln -sfn ~/dotfiles/.zshrc ~/.zshrc
 ln -sfn ~/dotfiles/.zshenv ~/.zshenv
 ln -sfn ~/dotfiles/.zsh_plugins.txt ~/.zsh_plugins.txt
 ln -sfn ~/dotfiles/.tmux.conf ~/.tmux.conf
+ln -sfn ~/dotfiles/.gitconfig ~/.gitconfig
 
 mkdir -p ~/.config
 ln -sfn ~/dotfiles/.config/starship.toml ~/.config/starship.toml
 ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
+```
+
+## Instalação (automática)
+```bash
+~/dotfiles/install.sh
 ```
 
 ## Observações
