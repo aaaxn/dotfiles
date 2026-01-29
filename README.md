@@ -42,6 +42,7 @@ ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
 
 Notas:
 - Quando houver dúvida de gerenciador, o script prioriza `brew` (e tenta `bun` apenas se aplicável), depois usa o gerenciador do sistema.
+- O bootstrap também instala o Homebrew e o `fzf`.
 
 ## Observações
 - O TPM (tmux plugin manager) deve estar em `~/.tmux/plugins/tpm`.

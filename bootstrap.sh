@@ -7,6 +7,40 @@ need_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
+maybe_eval_brew_shellenv() {
+  if need_cmd brew; then
+    eval "$(brew shellenv)"
+  elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  elif [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+}
+
+install_homebrew() {
+  if need_cmd brew; then
+    log "homebrew already installed"
+    return
+  fi
+
+  if ! need_cmd curl; then
+    log "curl not found; cannot install homebrew"
+    return 1
+  fi
+
+  log "Installing homebrew"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  maybe_eval_brew_shellenv
+
+  if need_cmd brew; then
+    log "homebrew installed"
+  else
+    log "homebrew installation finished, but brew is not in PATH yet"
+  fi
+}
+
 select_system_pm() {
   if need_cmd apt-get; then
     echo "apt-get"
@@ -178,6 +212,10 @@ install_tpm() {
 log "Bootstrapping dotfiles dependencies"
 
 ensure_packages git zsh tmux curl wget
+install_homebrew
+maybe_eval_brew_shellenv
+
+ensure_packages fzf
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
   ensure_optional_cmd_pkg wl-copy wl-clipboard
