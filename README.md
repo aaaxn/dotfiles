@@ -35,6 +35,11 @@ ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
 ~/dotfiles/install.sh
 ```
 
+## Bootstrap (dependências)
+```bash
+~/dotfiles/bootstrap.sh
+```
+
 ## Observações
 - O TPM (tmux plugin manager) deve estar em `~/.tmux/plugins/tpm`.
 - `~/.zsh_plugins.zsh` é gerado pelo Antidote; mantenha apenas o `.zsh_plugins.txt` versionado.
