@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUP_DIR=""
 
 log() {
@@ -51,15 +51,15 @@ link_item() {
 log "Installing dotfiles from: $REPO_DIR"
 
 # Base files
-link_item "$REPO_DIR/.zshrc" "$HOME/.zshrc"
-link_item "$REPO_DIR/.zshenv" "$HOME/.zshenv"
-link_item "$REPO_DIR/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
-link_item "$REPO_DIR/.tmux.conf" "$HOME/.tmux.conf"
-link_item "$REPO_DIR/.gitconfig" "$HOME/.gitconfig"
+link_item "$REPO_DIR/home/.zshrc" "$HOME/.zshrc"
+link_item "$REPO_DIR/home/.zshenv" "$HOME/.zshenv"
+link_item "$REPO_DIR/home/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
+link_item "$REPO_DIR/home/.tmux.conf" "$HOME/.tmux.conf"
+link_item "$REPO_DIR/home/.gitconfig" "$HOME/.gitconfig"
 
 # Config directories
-link_item "$REPO_DIR/.config/starship.toml" "$HOME/.config/starship.toml"
-link_item "$REPO_DIR/.config/tmux" "$HOME/.config/tmux"
+link_item "$REPO_DIR/config/starship.toml" "$HOME/.config/starship.toml"
+link_item "$REPO_DIR/config/tmux" "$HOME/.config/tmux"
 
 log "Done."
 if [[ -n "$BACKUP_DIR" ]]; then

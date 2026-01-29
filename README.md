@@ -5,39 +5,44 @@ Configurações essenciais organizadas seguindo a estrutura do `$HOME`.
 ## Estrutura
 ```
 .
-├── .config
+├── config
 │   ├── starship.toml
 │   └── tmux
 │       ├── tmux.conf
 │       └── scripts
-├── .tmux.conf
-├── .zshenv
-├── .zsh_plugins.txt
-└── .zshrc
+├── home
+│   ├── .gitconfig
+│   ├── .tmux.conf
+│   ├── .zshenv
+│   ├── .zsh_plugins.txt
+│   └── .zshrc
+└── scripts
+    ├── bootstrap.sh
+    └── install.sh
 ```
 
 ## Instalação (manual)
 ```bash
 # no $HOME
-ln -sfn ~/dotfiles/.zshrc ~/.zshrc
-ln -sfn ~/dotfiles/.zshenv ~/.zshenv
-ln -sfn ~/dotfiles/.zsh_plugins.txt ~/.zsh_plugins.txt
-ln -sfn ~/dotfiles/.tmux.conf ~/.tmux.conf
-ln -sfn ~/dotfiles/.gitconfig ~/.gitconfig
+ln -sfn ~/dotfiles/home/.zshrc ~/.zshrc
+ln -sfn ~/dotfiles/home/.zshenv ~/.zshenv
+ln -sfn ~/dotfiles/home/.zsh_plugins.txt ~/.zsh_plugins.txt
+ln -sfn ~/dotfiles/home/.tmux.conf ~/.tmux.conf
+ln -sfn ~/dotfiles/home/.gitconfig ~/.gitconfig
 
 mkdir -p ~/.config
-ln -sfn ~/dotfiles/.config/starship.toml ~/.config/starship.toml
-ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
+ln -sfn ~/dotfiles/config/starship.toml ~/.config/starship.toml
+ln -sfn ~/dotfiles/config/tmux ~/.config/tmux
 ```
 
 ## Instalação (automática)
 ```bash
-~/dotfiles/install.sh
+~/dotfiles/scripts/install.sh
 ```
 
 ## Bootstrap (dependências)
 ```bash
-~/dotfiles/bootstrap.sh
+~/dotfiles/scripts/bootstrap.sh
 ```
 
 Notas:
