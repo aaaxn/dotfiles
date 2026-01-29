@@ -7,6 +7,39 @@ need_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
+select_system_pm() {
+  if need_cmd apt-get; then
+    echo "apt-get"
+  elif need_cmd dnf; then
+    echo "dnf"
+  elif need_cmd yum; then
+    echo "yum"
+  elif need_cmd pacman; then
+    echo "pacman"
+  elif need_cmd apk; then
+    echo "apk"
+  elif need_cmd zypper; then
+    echo "zypper"
+  else
+    return 1
+  fi
+}
+
+select_pm() {
+  if [[ -n "${DOTFILES_PM:-}" ]]; then
+    echo "$DOTFILES_PM"
+    return 0
+  fi
+
+  if need_cmd brew; then
+    echo "brew"
+  elif need_cmd bun; then
+    echo "bun"
+  else
+    select_system_pm
+  fi
+}
+
 sudo_if_needed() {
   if [[ $EUID -eq 0 ]]; then
     "$@"
@@ -19,21 +52,37 @@ sudo_if_needed() {
 
 pkg_install() {
   local pkgs=("$@")
+  local pm
 
-  if need_cmd apt-get; then
+  pm="$(select_pm || true)"
+  if [[ -z "$pm" ]]; then
+    log "No supported package manager found. Install manually: ${pkgs[*]}"
+    return 1
+  fi
+
+  if [[ "$pm" == "bun" ]]; then
+    log "bun detected, but these are system packages; falling back to a system package manager."
+    pm="$(select_system_pm || true)"
+    if [[ -z "$pm" ]]; then
+      log "No supported system package manager found. Install manually: ${pkgs[*]}"
+      return 1
+    fi
+  fi
+
+  if [[ "$pm" == "apt-get" ]]; then
     sudo_if_needed apt-get update -y
     sudo_if_needed apt-get install -y "${pkgs[@]}"
-  elif need_cmd dnf; then
+  elif [[ "$pm" == "dnf" ]]; then
     sudo_if_needed dnf install -y "${pkgs[@]}"
-  elif need_cmd yum; then
+  elif [[ "$pm" == "yum" ]]; then
     sudo_if_needed yum install -y "${pkgs[@]}"
-  elif need_cmd pacman; then
+  elif [[ "$pm" == "pacman" ]]; then
     sudo_if_needed pacman -Sy --noconfirm "${pkgs[@]}"
-  elif need_cmd apk; then
+  elif [[ "$pm" == "apk" ]]; then
     sudo_if_needed apk add --no-cache "${pkgs[@]}"
-  elif need_cmd zypper; then
+  elif [[ "$pm" == "zypper" ]]; then
     sudo_if_needed zypper --non-interactive install "${pkgs[@]}"
-  elif need_cmd brew; then
+  elif [[ "$pm" == "brew" ]]; then
     brew install "${pkgs[@]}"
   else
     log "No supported package manager found. Install manually: ${pkgs[*]}"
@@ -54,6 +103,22 @@ ensure_packages() {
     pkg_install "${missing[@]}"
   else
     log "Packages already installed: $*"
+  fi
+}
+
+ensure_optional_cmd_pkg() {
+  local cmd="$1"
+  local pkg="$2"
+
+  if need_cmd "$cmd"; then
+    log "Optional package already installed: $cmd"
+    return 0
+  fi
+
+  log "Installing optional package: $pkg (for $cmd)"
+  if ! pkg_install "$pkg"; then
+    log "Optional install failed for $pkg. You can install it manually."
+    return 0
   fi
 }
 
@@ -113,6 +178,12 @@ install_tpm() {
 log "Bootstrapping dotfiles dependencies"
 
 ensure_packages git zsh tmux curl wget
+
+if [[ "$(uname -s)" != "Darwin" ]]; then
+  ensure_optional_cmd_pkg wl-copy wl-clipboard
+  ensure_optional_cmd_pkg xclip xclip
+fi
+
 install_starship
 install_antidote
 install_tpm

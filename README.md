@@ -40,6 +40,9 @@ ln -sfn ~/dotfiles/.config/tmux ~/.config/tmux
 ~/dotfiles/bootstrap.sh
 ```
 
+Notas:
+- Quando houver dúvida de gerenciador, o script prioriza `brew` (e tenta `bun` apenas se aplicável), depois usa o gerenciador do sistema.
+
 ## Observações
 - O TPM (tmux plugin manager) deve estar em `~/.tmux/plugins/tpm`.
 - `~/.zsh_plugins.zsh` é gerado pelo Antidote; mantenha apenas o `.zsh_plugins.txt` versionado.
