@@ -16,12 +16,12 @@ check_process() {
   local label
   label_for() {
     case "$1" in
-      codex) printf '%s' "🤖 Codex" ;;
-      claude) printf '%s' "🪶 Claude Code" ;;
-      aider) printf '%s' "🛠️ Aider" ;;
-      goose) printf '%s' "🪿 Goose" ;;
-      amp) printf '%s' "⚡ Amp" ;;
-      opencode) printf '%s' "🧩 OpenCode" ;;
+      codex) printf '%s' " Codex" ;;
+      claude) printf '%s' " Claude Code" ;;
+      aider) printf '%s' " Aider" ;;
+      goose) printf '%s' " Goose" ;;
+      amp) printf '%s' " Amp" ;;
+      opencode) printf '%s' " OpenCode" ;;
     esac
   }
 
