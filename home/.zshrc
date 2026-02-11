@@ -23,10 +23,4 @@ alias cc='claude code'
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
-if command -v brew >/dev/null 2>&1; then
-  eval "$(brew shellenv)"
-elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
