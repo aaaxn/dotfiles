@@ -19,8 +19,12 @@ alias tms='tmux new -s'
 alias tmls='tmux ls'
 alias oc='opencode'
 alias cc='claude code'
+alias codex='codex --yolo'
 
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+
+. "$HOME/.local/share/../bin/env"
+export PATH="/home/linuxbrew/.linuxbrew/opt/node@24/bin:$PATH"
