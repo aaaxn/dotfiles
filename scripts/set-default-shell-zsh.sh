@@ -17,6 +17,21 @@ sudo_if_needed() {
   fi
 }
 
+detect_current_shell() {
+  local from_passwd=""
+  if need_cmd getent; then
+    from_passwd="$(getent passwd "$USER" 2>/dev/null | awk -F: '{print $7}')"
+  elif [[ -r /etc/passwd ]]; then
+    from_passwd="$(grep -E "^${USER}:" /etc/passwd 2>/dev/null | awk -F: '{print $7}')"
+  fi
+
+  if [[ -n "$from_passwd" ]]; then
+    printf "%s\n" "$from_passwd"
+  else
+    printf "%s\n" "${SHELL:-}"
+  fi
+}
+
 detect_zsh() {
   # Prefer PATH, but handle common Homebrew and system locations too.
   if need_cmd zsh; then
@@ -72,6 +87,10 @@ main() {
 
   if [[ ! -t 0 ]]; then
     log "Non-interactive session; skipping default shell change (set DOTFILES_SKIP_CHSH=1 to silence)"
+    log "Manual:"
+    log "  chsh -s \"$(detect_zsh 2>/dev/null || echo /path/to/zsh)\" \"$USER\""
+    log "If chsh fails on Linux with PAM errors, use:"
+    log "  sudo usermod -s \"$(detect_zsh 2>/dev/null || echo /path/to/zsh)\" \"$USER\""
     return 0
   fi
 
@@ -87,7 +106,8 @@ main() {
     return 1
   fi
 
-  local current_shell="${SHELL:-}"
+  local current_shell
+  current_shell="$(detect_current_shell)"
   if [[ -n "$current_shell" && "$current_shell" == "$zsh_path" ]]; then
     log "Default shell already set to zsh: $zsh_path"
     return 0
@@ -99,11 +119,22 @@ main() {
   if chsh -s "$zsh_path" "$USER"; then
     log "Done. Log out and back in to apply."
   else
-    log "chsh failed. You may need to run it manually:"
+    log "chsh failed."
+    if [[ "$(uname -s)" == "Linux" ]] && need_cmd usermod; then
+      log "Trying Linux fallback with usermod (may require sudo)"
+      if sudo_if_needed usermod -s "$zsh_path" "$USER"; then
+        log "Done with usermod. Log out and back in to apply."
+        return 0
+      fi
+    fi
+    log "You may need to run this manually:"
     log "  chsh -s \"$zsh_path\" \"$USER\""
+    if [[ "$(uname -s)" == "Linux" ]]; then
+      log "or:"
+      log "  sudo usermod -s \"$zsh_path\" \"$USER\""
+    fi
     return 1
   fi
 }
 
 main "$@"
-
