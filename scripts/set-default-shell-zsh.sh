@@ -85,15 +85,6 @@ main() {
     return 0
   fi
 
-  if [[ ! -t 0 ]]; then
-    log "Non-interactive session; skipping default shell change (set DOTFILES_SKIP_CHSH=1 to silence)"
-    log "Manual:"
-    log "  chsh -s \"$(detect_zsh 2>/dev/null || echo /path/to/zsh)\" \"$USER\""
-    log "If chsh fails on Linux with PAM errors, use:"
-    log "  sudo usermod -s \"$(detect_zsh 2>/dev/null || echo /path/to/zsh)\" \"$USER\""
-    return 0
-  fi
-
   if ! need_cmd chsh; then
     log "chsh not found; cannot set default shell automatically."
     log "Manual: chsh -s \"$(detect_zsh 2>/dev/null || echo /path/to/zsh)\" \"$USER\""
@@ -115,14 +106,24 @@ main() {
 
   ensure_shell_allowed "$zsh_path"
 
+  # chsh may prompt for a password and needs access to a TTY.
+  # When called from another script stdin might not be a terminal,
+  # so we explicitly wire /dev/tty (if available) into chsh.
+  if [[ ! -e /dev/tty ]]; then
+    log "No TTY available; cannot run chsh interactively."
+    log "Run manually:"
+    log "  chsh -s \"$zsh_path\" \"$USER\""
+    return 0
+  fi
+
   log "Setting default shell to: $zsh_path"
-  if chsh -s "$zsh_path" "$USER"; then
+  if chsh -s "$zsh_path" "$USER" </dev/tty; then
     log "Done. Log out and back in to apply."
   else
     log "chsh failed."
     if [[ "$(uname -s)" == "Linux" ]] && need_cmd usermod; then
       log "Trying Linux fallback with usermod (may require sudo)"
-      if sudo_if_needed usermod -s "$zsh_path" "$USER"; then
+      if sudo_if_needed usermod -s "$zsh_path" "$USER" </dev/tty; then
         log "Done with usermod. Log out and back in to apply."
         return 0
       fi
