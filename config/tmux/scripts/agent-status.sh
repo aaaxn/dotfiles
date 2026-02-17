@@ -22,6 +22,7 @@ check_process() {
       goose) printf '%s' " Goose" ;;
       amp) printf '%s' " Amp" ;;
       opencode) printf '%s' " OpenCode" ;;
+      pi) printf '%s' "π pi" ;;
     esac
   }
 
@@ -31,6 +32,7 @@ check_process() {
     goose) label="$(label_for goose)"; printf '%s' "$label"; return 0 ;;
     amp) label="$(label_for amp)"; printf '%s' "$label"; return 0 ;;
     opencode) label="$(label_for opencode)"; printf '%s' "$label"; return 0 ;;
+    pi) label="$(label_for pi)"; printf '%s' "$label"; return 0 ;;
   esac
 
   if [[ "$args" == *"/codex"* ]] || [[ "$comm" == *codex* ]]; then
@@ -41,6 +43,12 @@ check_process() {
 
   if [[ "$args" == *"/opencode"* ]] || [[ "$comm" == *opencode* ]]; then
     label="$(label_for opencode)"
+    printf '%s' "$label"
+    return 0
+  fi
+
+  if [[ "$args" == *"/pi"* ]] || [[ "$comm" == *pi* ]]; then
+    label="$(label_for pi)"
     printf '%s' "$label"
     return 0
   fi
