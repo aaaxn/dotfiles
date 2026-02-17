@@ -60,6 +60,7 @@ link_item "$REPO_DIR/home/.gitconfig" "$HOME/.gitconfig"
 # Config directories
 link_item "$REPO_DIR/config/starship.toml" "$HOME/.config/starship.toml"
 link_item "$REPO_DIR/config/tmux" "$HOME/.config/tmux"
+link_item "$REPO_DIR/config/zsh/conf.d" "$HOME/.config/zsh/conf.d"
 
 log "Done."
 if [[ -n "$BACKUP_DIR" ]]; then
