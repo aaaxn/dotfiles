@@ -13,6 +13,12 @@ if [[ -z "$pane_path" ]]; then
   pane_path="$HOME"
 fi
 
+active_pane_id="$(tmux display-message -p -t "$window_id" "#{pane_id}" 2>/dev/null || true)"
+manual_label=""
+if [[ -n "$active_pane_id" ]]; then
+  manual_label="$(tmux display-message -p -t "$active_pane_id" "#{@manual_pane_label}" 2>/dev/null || true)"
+fi
+
 format_target() {
   local target_path="$1"
 
@@ -50,9 +56,17 @@ format_target() {
 info="$(format_target "$pane_path")"
 agent="$("$script_dir/agent-status.sh" "$window_id" 2>/dev/null || true)"
 
+if [[ -n "$manual_label" ]]; then
+  if [[ -n "$agent" ]]; then
+    printf '%s + %s' "$agent" "$manual_label"
+  else
+    printf '%s' "$manual_label"
+  fi
+  exit 0
+fi
+
 if [[ -n "$agent" ]]; then
   printf '%s %s' "$agent" "$info"
 else
   printf '%s' "$info"
 fi
-
