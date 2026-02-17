@@ -7,16 +7,6 @@ need_cmd() {
   command -v "$1" >/dev/null 2>&1
 }
 
-sudo_if_needed() {
-  if [[ $EUID -eq 0 ]]; then
-    "$@"
-  elif need_cmd sudo; then
-    sudo "$@"
-  else
-    "$@"
-  fi
-}
-
 detect_current_shell() {
   local from_passwd=""
   if need_cmd getent; then
@@ -33,7 +23,6 @@ detect_current_shell() {
 }
 
 detect_zsh() {
-  # Prefer PATH, but handle common Homebrew and system locations too.
   if need_cmd zsh; then
     command -v zsh
     return 0
@@ -58,11 +47,14 @@ detect_zsh() {
   return 1
 }
 
+is_local_user() {
+  grep -qE "^${USER}:" /etc/passwd 2>/dev/null
+}
+
 ensure_shell_allowed() {
   local shell_path="$1"
 
   if [[ ! -r /etc/shells ]]; then
-    log "WARN: /etc/shells not readable; cannot verify if $shell_path is allowed."
     return 0
   fi
 
@@ -70,24 +62,74 @@ ensure_shell_allowed() {
     return 0
   fi
 
-  # Most chsh implementations require the shell to be listed in /etc/shells.
   log "Adding $shell_path to /etc/shells (may require sudo)"
   if [[ -w /etc/shells ]]; then
     printf "%s\n" "$shell_path" >>/etc/shells
-  else
-    sudo_if_needed sh -c "printf '%s\n' '$shell_path' >> /etc/shells"
+  elif need_cmd sudo; then
+    sudo sh -c "printf '%s\n' '$shell_path' >> /etc/shells"
   fi
+}
+
+# Fallback: add an exec-zsh snippet to ~/.bashrc for network-managed accounts.
+BASHRC_MARKER="# dotfiles: exec zsh"
+
+install_bashrc_exec() {
+  local zsh_path="$1"
+  local bashrc="$HOME/.bashrc"
+
+  if [[ -f "$bashrc" ]] && grep -qF "$BASHRC_MARKER" "$bashrc"; then
+    log "~/.bashrc already contains exec-zsh snippet"
+    return 0
+  fi
+
+  local snippet
+  snippet="$(cat <<EOF
+
+$BASHRC_MARKER
+# Launch zsh automatically when bash starts (login shell is managed by
+# LDAP/network and cannot be changed with chsh).
+if [[ -x "$zsh_path" && -z "\${ZSH_EXEC_GUARD:-}" ]]; then
+  export ZSH_EXEC_GUARD=1
+  exec "$zsh_path" -l
+fi
+EOF
+)"
+
+  if [[ -f "$bashrc" ]]; then
+    printf "%s\n" "$snippet" >> "$bashrc"
+  else
+    printf "%s\n" "$snippet" > "$bashrc"
+  fi
+
+  log "Added exec-zsh snippet to ~/.bashrc"
+  log "New login sessions will start zsh automatically."
+}
+
+try_chsh() {
+  local zsh_path="$1"
+
+  if ! need_cmd chsh; then
+    return 1
+  fi
+
+  if [[ ! -e /dev/tty ]]; then
+    return 1
+  fi
+
+  ensure_shell_allowed "$zsh_path"
+
+  log "Trying chsh..."
+  if chsh -s "$zsh_path" "$USER" </dev/tty 2>/dev/null; then
+    log "Done. Log out and back in to apply."
+    return 0
+  fi
+
+  return 1
 }
 
 main() {
   if [[ "${DOTFILES_SKIP_CHSH:-}" == "1" ]]; then
     log "Skipping default shell change (DOTFILES_SKIP_CHSH=1)"
-    return 0
-  fi
-
-  if ! need_cmd chsh; then
-    log "chsh not found; cannot set default shell automatically."
-    log "Manual: chsh -s \"$(detect_zsh 2>/dev/null || echo /path/to/zsh)\" \"$USER\""
     return 0
   fi
 
@@ -104,38 +146,18 @@ main() {
     return 0
   fi
 
-  ensure_shell_allowed "$zsh_path"
-
-  # chsh may prompt for a password and needs access to a TTY.
-  # When called from another script stdin might not be a terminal,
-  # so we explicitly wire /dev/tty (if available) into chsh.
-  if [[ ! -e /dev/tty ]]; then
-    log "No TTY available; cannot run chsh interactively."
-    log "Run manually:"
-    log "  chsh -s \"$zsh_path\" \"$USER\""
-    return 0
-  fi
-
-  log "Setting default shell to: $zsh_path"
-  if chsh -s "$zsh_path" "$USER" </dev/tty; then
-    log "Done. Log out and back in to apply."
+  # For local users, try chsh first.
+  if is_local_user; then
+    if try_chsh "$zsh_path"; then
+      return 0
+    fi
+    log "chsh failed; falling back to ~/.bashrc exec method."
   else
-    log "chsh failed."
-    if [[ "$(uname -s)" == "Linux" ]] && need_cmd usermod; then
-      log "Trying Linux fallback with usermod (may require sudo)"
-      if sudo_if_needed usermod -s "$zsh_path" "$USER" </dev/tty; then
-        log "Done with usermod. Log out and back in to apply."
-        return 0
-      fi
-    fi
-    log "You may need to run this manually:"
-    log "  chsh -s \"$zsh_path\" \"$USER\""
-    if [[ "$(uname -s)" == "Linux" ]]; then
-      log "or:"
-      log "  sudo usermod -s \"$zsh_path\" \"$USER\""
-    fi
-    return 1
+    log "Network-managed account detected (user not in /etc/passwd)."
+    log "Cannot use chsh; using ~/.bashrc exec fallback."
   fi
+
+  install_bashrc_exec "$zsh_path"
 }
 
 main "$@"
