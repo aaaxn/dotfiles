@@ -19,7 +19,7 @@ alias tms='tmux new -s'
 alias tmls='tmux ls'
 alias oc='opencode'
 alias cc='claude code'
-alias codex='codex --yolo'
+alias codex='codex --yolo -m gpt-5.3-codex -c model_reasoning_effort=high'
 alias tmux-prefix='$HOME/.config/tmux/scripts/tmux-prefix.sh'
 
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
