@@ -61,6 +61,7 @@ render_cheatsheet() {
   krow "prefix x"     "Fechar painel atual"
   krow "prefix m"     "Maximizar / restaurar painel"
   krow "prefix P"     "Definir label manual do painel"
+  krow "prefix g"     "Popup Git (repo/branch/status)"
   krow "prefix r"     "Recarregar tmux.conf"
   krow "prefix T"     "Menu de temas"
   krow "prefix ?"     "Abrir este cheatsheet"
