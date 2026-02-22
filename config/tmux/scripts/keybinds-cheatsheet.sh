@@ -3,80 +3,113 @@ set -euo pipefail
 
 prefix="$(tmux show-option -gqv prefix 2>/dev/null || echo 'C-b')"
 
-use_color=0
+# -- Colors (16-color ANSI only, same style as window-picker.sh) --------
 if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
-  use_color=1
-fi
-
-if [[ "$use_color" -eq 1 ]]; then
-  reset=$'\033[0m'
-  bold=$'\033[1m'
-  dim=$'\033[2m'
-  cyan=$'\033[36m'
-  green=$'\033[32m'
-  yellow=$'\033[33m'
+  R=$'\033[0m'
+  BD=$'\033[1m'
+  DIM=$'\033[2m'
+  IT=$'\033[3m'
+  CY=$'\033[36m'       # cyan
+  GR=$'\033[32m'       # green
+  YE=$'\033[33m'       # yellow
+  MG=$'\033[35m'       # magenta
+  BL=$'\033[34m'       # blue
+  WH=$'\033[97m'       # bright white
+  GY=$'\033[90m'       # dark grey
 else
-  reset=''
-  bold=''
-  dim=''
-  cyan=''
-  green=''
-  yellow=''
+  R='' BD='' DIM='' IT='' CY='' GR='' YE='' MG='' BL='' WH='' GY=''
 fi
 
-print_row() {
-  local key="$1"
-  local desc="$2"
-  printf "  %b%-22s%b %s\n" "${green}${bold}" "$key" "$reset" "$desc"
+# -- Helpers ------------------------------------------------------------
+W=72  # content width
+
+hline() {
+  printf '%b%s%b\n' "${DIM}${CY}" "$(printf '%*s' "$W" '' | tr ' ' '-')" "$R"
 }
 
-print_section() {
-  local title="$1"
-  printf "\n%b%s%b\n" "${cyan}${bold}" "$title" "$reset"
+title_hline() {
+  printf '%b%s%b\n' "${BD}${CY}" "$(printf '%*s' "$W" '' | tr ' ' '=')" "$R"
 }
 
+section() {
+  local label="$1" color="${2:-$MG}"
+  printf '\n%b  %s%b\n' "${BD}${color}" "$label" "$R"
+  printf '%b  %s%b\n' "${DIM}${color}" "$(printf '%*s' "$((${#label}))" '' | tr ' ' '-')" "$R"
+}
+
+krow() {
+  local key="$1" desc="$2"
+  local kw=18
+  printf '  %b%-*s%b  %b%s%b\n' "${GR}${BD}" "$kw" "[$key]" "$R" "${WH}" "$desc" "$R"
+}
+
+note() {
+  printf '  %b%s%b\n' "${IT}${GY}" "$1" "$R"
+}
+
+# -- Render -------------------------------------------------------------
 render_cheatsheet() {
-  printf "%b+------------------------------------------------------------------------+%b\n" "$cyan" "$reset"
-  printf "%b| %-70s |%b\n" "$cyan" "${bold}TMUX KEYBINDS CHEATSHEET${reset}${cyan}" "$reset"
-  printf "%b| %-70s |%b\n" "$cyan" "Prefix atual: ${yellow}${bold}${prefix}${reset}${cyan}" "$reset"
-  printf "%b+------------------------------------------------------------------------+%b\n" "$cyan" "$reset"
+  echo
+  title_hline
+  printf '%b%*s%b\n' "${BD}${CY}" "$(( (W + 26) / 2 ))" "TMUX KEYBINDS CHEATSHEET" "$R"
+  printf '%b%*s%b\n' "${DIM}${WH}" "$(( (W + 14 + ${#prefix}) / 2 ))" "prefix = $prefix" "$R"
+  title_hline
 
-  print_section "JANELAS E PANEIS"
-  print_row "$prefix + c" "Nova janela no diretorio atual"
-  print_row "$prefix + w" "Seletor de janelas (fzf)"
-  print_row "$prefix + x" "Fecha pane atual"
-  print_row "$prefix + m" "Maximiza/restaura pane atual"
-  print_row "$prefix + P" "Define label manual do pane"
-  print_row "$prefix + r" "Recarrega config do tmux"
-  print_row "$prefix + T" "Menu de temas"
-  print_row "$prefix + ?" "Abre este cheatsheet"
+  section "JANELAS & PAINEIS" "$MG"
+  krow "prefix c"     "Nova janela (dir atual)"
+  krow "prefix w"     "Seletor de janelas (fzf)"
+  krow "prefix x"     "Fechar painel atual"
+  krow "prefix m"     "Maximizar / restaurar painel"
+  krow "prefix P"     "Definir label manual do painel"
+  krow "prefix r"     "Recarregar tmux.conf"
+  krow "prefix T"     "Menu de temas"
+  krow "prefix ?"     "Abrir este cheatsheet"
 
-  print_section "SPLITS E LAYOUT"
-  print_row "$prefix + \\" "Split horizontal"
-  print_row "$prefix + Enter" "Split vertical"
-  print_row "$prefix + Delete" "Equaliza panes (layout tiled)"
+  hline
+  section "SPLITS & LAYOUT" "$BL"
+  krow "prefix \\"    "Split horizontal  |"
+  krow "prefix Enter" "Split vertical    --"
+  krow "prefix Del"   "Equalizar paineis (tiled)"
 
-  print_section "REDIMENSIONAR PANEIS"
-  print_row "$prefix + -" "Reduz altura"
-  print_row "$prefix + =" "Aumenta altura"
-  print_row "$prefix + [" "Move borda para esquerda"
-  print_row "$prefix + ]" "Move borda para direita"
+  hline
+  section "REDIMENSIONAR" "$YE"
+  krow "prefix -"     "Reduzir altura"
+  krow "prefix ="     "Aumentar altura"
+  krow "prefix ["     "Mover borda p/ esquerda"
+  krow "prefix ]"     "Mover borda p/ direita"
 
-  print_section "BUSCA E COPY MODE"
-  print_row "$prefix + /" "Busca no scrollback (fuzzback)"
-  print_row "$prefix + v" "Entra em copy mode"
-  print_row "copy-mode + v" "Inicia selecao"
-  print_row "copy-mode + V" "Seleciona linha inteira"
-  print_row "copy-mode + C-v" "Seleciona bloco"
-  print_row "copy-mode + y" "Copia para clipboard e sai"
-  print_row "copy-mode + q" "Sai do copy mode"
+  hline
+  section "NAVEGACAO ENTRE PAINEIS" "$GR"
+  krow "Ctrl-h / Ctrl-j"  "Ir para painel da esq / abaixo"
+  krow "Ctrl-k / Ctrl-l"  "Ir para painel de cima / dir"
+  note "Funciona inclusive dentro do copy-mode."
 
-  print_section "MOUSE"
-  printf "  Scroll com mouse funciona no historico/copy-mode.\n"
+  hline
+  section "BUSCA & COPY MODE" "$CY"
+  krow "prefix /"     "Busca no scrollback (fuzzback)"
+  krow "prefix v"     "Entrar no copy mode"
+  echo
+  krow "v"            "Iniciar selecao"
+  krow "V"            "Selecionar linha inteira"
+  krow "Ctrl-v"       "Alternar selecao em bloco"
+  krow "y"            "Copiar para clipboard e sair"
+  krow "Esc"          "Limpar selecao"
+  krow "q"            "Sair do copy mode"
+  note "Teclas acima funcionam dentro do copy-mode (vi)."
 
-  printf "\n%bDica:%b pressione %bq%b (no less) ou %bCtrl-c%b para fechar.\n" "$dim" "$reset" "$bold" "$reset" "$bold" "$reset"
+  hline
+  section "MOUSE" "$GY"
+  note "Scroll com mouse funciona no historico/copy-mode."
+  note "Drag seleciona e copia automaticamente."
+
+  echo
+  title_hline
+  printf '%b%*s%b\n' "${DIM}${WH}" "$(( (W + 22) / 2 ))" "Pressione  q  para sair" "$R"
+  title_hline
+  echo
 }
 
+# -- Output -------------------------------------------------------------
 if [[ ! -t 1 ]]; then
   render_cheatsheet
   exit 0
