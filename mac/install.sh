@@ -49,6 +49,21 @@ link_item() {
 
 log "Installing dotfiles (mac) from: $REPO_DIR"
 
+# ── Homebrew packages ─────────────────────────────────────────────────────────
+log "Installing brew packages..."
+
+brew install starship zsh-autosuggestions zsh-autocomplete
+
+brew tap nikitabobko/tap
+brew install nikitabobko/tap/aerospace
+
+brew tap felixkratz/formulae
+brew install felixkratz/formulae/sketchybar
+
+brew install --cask ghostty
+brew install --cask karabiner-elements
+
+
 # ── Cross-platform ────────────────────────────────────────────────────────────
 link_item "$REPO_DIR/home/.zshenv"          "$HOME/.zshenv"
 link_item "$REPO_DIR/home/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
