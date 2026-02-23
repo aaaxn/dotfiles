@@ -1,0 +1,24 @@
+font-size = 14
+# font-family = SauceCodePro Nerd Font
+font-family = JetBrainsMono Nerd Font
+
+# font-family-bold = SauceCodePro Nerd Font
+# font-family-italic = SauceCodePro Nerd Font
+# font-family-bold-italic = SauceCodePro Nerd Font
+
+theme = Catppuccin Mocha
+title = "妖怪"
+term = xterm-256color
+
+
+background-image = ~/Downloads/wallhaven-jewvzy.jpg
+background-image-opacity = 0.2
+background-image-fit = cover
+
+shell-integration-features = ssh-env
+
+# Trata Option esquerdo como Alt (Meta) para tmux/shell remotos via SSH.
+macos-option-as-alt = left
+
+keybind = cmd+r=reload_config
+keybind = cmd+t=new_window

@@ -1,1 +1,7 @@
 config/tmux/themes/repos/
+
+# mac — generated/binary files
+mac/config/karabiner/automatic_backups/
+mac/config/sketchybar/data/
+mac/config/sketchybar/helpers/menus/bin/
+
