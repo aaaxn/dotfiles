@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-window_text='#(~/.config/tmux/scripts/git-status.sh "#{window_id}")'
+window_text=' #(~/.config/tmux/scripts/git-status.sh "#{window_id}") '
 
 # Keep Catppuccin wired to the same custom window text.
 tmux set-option -gq @catppuccin_window_text "$window_text"
@@ -35,7 +35,6 @@ if [ "$selected_theme" = "catppuccin" ]; then
   # Build Catppuccin modules after theme load so tmux-cpu can interpolate status-right.
   tmux set-option -gq status-right ""
   tmux set-option -agF status-right "#{@catppuccin_status_gitmux}"
-  tmux set-option -agq status-right " "
   tmux set-option -agF status-right "#{E:@catppuccin_status_cpu}"
 fi
 
