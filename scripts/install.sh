@@ -55,6 +55,7 @@ link_item "$REPO_DIR/home/.zshrc" "$HOME/.zshrc"
 link_item "$REPO_DIR/home/.zshenv" "$HOME/.zshenv"
 link_item "$REPO_DIR/home/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
 link_item "$REPO_DIR/home/.tmux.conf" "$HOME/.tmux.conf"
+link_item "$REPO_DIR/home/.gitmux.conf" "$HOME/.gitmux.conf"
 link_item "$REPO_DIR/home/.gitconfig" "$HOME/.gitconfig"
 
 # Config directories

@@ -68,6 +68,7 @@ brew install --cask karabiner-elements
 link_item "$REPO_DIR/home/.zshenv"          "$HOME/.zshenv"
 link_item "$REPO_DIR/home/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
 link_item "$REPO_DIR/home/.tmux.conf"       "$HOME/.tmux.conf"
+link_item "$REPO_DIR/home/.gitmux.conf"     "$HOME/.gitmux.conf"
 link_item "$REPO_DIR/home/.gitconfig"       "$HOME/.gitconfig"
 link_item "$REPO_DIR/config/starship.toml"  "$HOME/.config/starship.toml"
 link_item "$REPO_DIR/config/tmux"           "$HOME/.config/tmux"

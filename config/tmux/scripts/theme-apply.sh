@@ -3,7 +3,7 @@ set -euo pipefail
 
 theme="${1:-}"
 case "$theme" in
-  catppuccin|tokyo-night|nord|ukiyo) ;;
+  catppuccin|tokyo-night|nord) ;;
   *)
     tmux display-message "Tema invalido: '$theme'"
     exit 1
@@ -33,11 +33,6 @@ case "$theme" in
     repo_url="https://github.com/arcticicestudio/nord-tmux.git"
     repo_dir="$repo_base/nord-tmux"
     entry_file="$repo_dir/nord.tmux"
-    ;;
-  ukiyo)
-    repo_url="https://github.com/Nybkox/tmux-ukiyo.git"
-    repo_dir="$repo_base/tmux-ukiyo"
-    entry_file="$repo_dir/scripts/ukiyo.sh"
     ;;
 esac
 

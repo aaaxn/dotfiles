@@ -17,5 +17,4 @@ label() {
 tmux display-menu -T "Tmux Themes" -x R -y P \
   "$(label catppuccin Catppuccin)" c "run-shell \"$apply_script catppuccin\"" \
   "$(label tokyo-night Tokyo Night)" t "run-shell \"$apply_script tokyo-night\"" \
-  "$(label nord Nord)" n "run-shell \"$apply_script nord\"" \
-  "$(label ukiyo Ukiyo)" u "run-shell \"$apply_script ukiyo\""
+  "$(label nord Nord)" n "run-shell \"$apply_script nord\""
