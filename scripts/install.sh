@@ -57,6 +57,7 @@ link_item "$REPO_DIR/home/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
 link_item "$REPO_DIR/home/.tmux.conf" "$HOME/.tmux.conf"
 link_item "$REPO_DIR/home/.gitmux.conf" "$HOME/.gitmux.conf"
 link_item "$REPO_DIR/home/.gitconfig" "$HOME/.gitconfig"
+link_item "$REPO_DIR/home/.codex/config.toml" "$HOME/.codex/config.toml"
 
 # Config directories
 link_item "$REPO_DIR/config/starship.toml" "$HOME/.config/starship.toml"
