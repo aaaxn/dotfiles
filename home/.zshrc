@@ -22,11 +22,17 @@ unset UV_PROJECT_ENVIRONMENT
 
 export TZ="America/Sao_Paulo"
 
-alias tma='tmux a -t'
-alias tms='tmux new -s'
-alias tmls='tmux ls'
+# Codex in tmux can fail to infer the terminal background when COLORFGBG is unset.
+# Provide a dark-background fallback only for tmux sessions.
+if [[ -n "$TMUX" && -z "$COLORFGBG" ]]; then
+  export COLORFGBG="15;0"
+fi
+
+alias tma='/usr/local/bin/tmux attach-session -t'
+alias tms='/usr/local/bin/tmux new -s'
+alias tmls='/usr/local/bin/tmux ls'
 alias oc='opencode'
-alias cc='claude code'
+alias cc='claude --dangerously-skip-permissions'
 alias codex='codex --yolo'
 codex-ns() {
   local base_link="$HOME/.agents/skills/superpowers"
