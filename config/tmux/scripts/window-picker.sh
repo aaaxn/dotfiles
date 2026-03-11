@@ -9,6 +9,65 @@ if ! command -v fzf >/dev/null 2>&1; then
 fi
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+self="$script_dir/window-picker.sh"
+
+# ── Send-pane mode (runs inside its own display-popup) ───────────────
+if [[ "${1:-}" == "--send-pane" ]]; then
+  src_pane="$2"
+
+  entries="__new__\t\033[33m[+ Nova Sessao]\033[0m"
+  while IFS= read -r sess; do
+    win_count="$(tmux list-windows -t "$sess" 2>/dev/null | wc -l)"
+    entries+=$'\n'"${sess}\t${sess} \033[90m(${win_count}w)\033[0m"
+  done < <(tmux list-sessions -F '#{session_name}')
+
+  selected="$(
+    echo -e "$entries" | fzf \
+      --ansi \
+      --prompt="Send pane to: " \
+      --header="Select target session" \
+      --preview='tmux list-windows -t {1} -F "  #{window_index}: #{window_name} — #{pane_current_path}" 2>/dev/null || echo "Nova sessao"' \
+      --preview-window=right,60% \
+      --delimiter=$'\t' \
+      --with-nth=2
+  )" || exit 0
+
+  target="$(awk '{print $1}' <<<"$selected")"
+
+  if [[ "$target" == "__new__" ]]; then
+    # Use fzf as a simple text input for the session name
+    session_name="$(
+      : | fzf \
+        --prompt="Session name: " \
+        --header="Type session name, press Enter" \
+        --no-info \
+        --disabled \
+        --bind='enter:become(echo {q})' \
+    )" || exit 0
+
+    [[ -z "$session_name" ]] && exit 0
+
+    session_name="${session_name//./-}"
+    session_name="${session_name//:/-}"
+
+    if ! tmux has-session -t "=$session_name" 2>/dev/null; then
+      tmux new-session -d -s "$session_name"
+      placeholder="$(tmux list-windows -t "$session_name" -F '#{window_id}' | head -1)"
+      tmux break-pane -d -s "$src_pane" -t "${session_name}:"
+      tmux kill-window -t "$placeholder" 2>/dev/null || true
+    else
+      tmux break-pane -d -s "$src_pane" -t "${session_name}:"
+    fi
+    tmux switch-client -t "$session_name"
+  else
+    tmux break-pane -d -s "$src_pane" -t "${target}:"
+    tmux switch-client -t "$target"
+  fi
+
+  exit 0
+fi
+
+# ── Normal window-picker mode ────────────────────────────────────────
 
 get_worktree_info() {
   local pane_path="$1"
@@ -43,6 +102,7 @@ get_worktree_info() {
 }
 
 current="$(tmux display-message -p '#{session_name}:#{window_index}')"
+src_pane="$(tmux display-message -p '#{pane_id}')"
 pos=1
 i=1
 lines=""
@@ -67,7 +127,6 @@ lines="${lines%$'\n'}"
 
 fzf_cmd=(fzf --tmux 80%,60%)
 if ! fzf --help 2>&1 | grep -q -- '--tmux'; then
-  # Older fzf builds might not support --tmux; fall back to plain fzf.
   fzf_cmd=(fzf)
 fi
 
@@ -76,7 +135,8 @@ selected="$(
     --ansi \
     --sync \
     --prompt="Switch to: " \
-    --header="Select a window" \
+    --header=$'enter: switch | ctrl-s: send pane to session' \
+    --expect="ctrl-s" \
     --preview='tmux capture-pane -ep -t {1}' \
     --preview-window=right,60% \
     --bind='ctrl-d:preview-half-page-down' \
@@ -86,7 +146,18 @@ selected="$(
     --with-nth=2
 )"
 
-if [[ -n "$selected" ]]; then
-  target="$(awk '{print $1}' <<<"$selected")"
-  tmux switch-client -t "$target" 2>/dev/null || tmux select-window -t "$target"
-fi
+key="$(head -1 <<<"$selected")"
+choice="$(sed -n '2p' <<<"$selected")"
+
+case "$key" in
+  ctrl-s)
+    # Open the send-pane picker in a new tmux popup
+    tmux display-popup -E -w 80% -h 60% "'$self' --send-pane '$src_pane'"
+    ;;
+  *)
+    if [[ -n "$choice" ]]; then
+      target="$(awk '{print $1}' <<<"$choice")"
+      tmux switch-client -t "$target" 2>/dev/null || tmux select-window -t "$target"
+    fi
+    ;;
+esac

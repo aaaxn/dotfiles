@@ -16,8 +16,8 @@ check_process() {
   local label
   label_for() {
     case "$1" in
-      codex) printf '%s' " Codex" ;;
-      claude) printf '%s' " Claude Code" ;;
+      codex) printf '%s' " codex" ;;
+      claude) printf '%s' " cc" ;;
       aider) printf '%s' " Aider" ;;
       goose) printf '%s' " Goose" ;;
       amp) printf '%s' " Amp" ;;
@@ -47,7 +47,7 @@ check_process() {
     return 0
   fi
 
-  if [[ "$args" == *"/pi"* ]] || [[ "$comm" == *pi* ]]; then
+  if [[ "$args" == */pi ]] || [[ "$args" == */pi\ * ]]; then
     label="$(label_for pi)"
     printf '%s' "$label"
     return 0
