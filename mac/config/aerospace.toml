@@ -2,21 +2,13 @@ start-at-login = true
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
-# Run Sketchybar together with AeroSpace
-after-startup-command = ['exec-and-forget sketchybar']
-
-# Notify Sketchybar about workspace change
-exec-on-workspace-change = ['/bin/bash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
-]
-
-# Gaps configuration with increased outer gaps
+# Gaps configuration
 [gaps]
 inner.horizontal = 7
 inner.vertical = 7
 outer.left = 20
 outer.bottom = 20
-outer.top = 44   # bar height (34) + 10px de respiro
+outer.top = 20
 outer.right = 20
 
 [key-mapping]
@@ -66,7 +58,7 @@ alt-shift-0 = 'move-node-to-workspace 10'
 alt-e = 'layout tiles horizontal'  # horizontal split
 alt-v = 'layout tiles vertical'    # vertical split
 alt-w = 'layout accordion'  # accordion layout (fullscreen-like)
-alt-f = ['mode service', 'layout floating tiling', 'exec-and-forget sketchybar --trigger aerospace_mode_change']  # toggle floating
+alt-f = ['mode service', 'layout floating tiling']  # toggle floating
 
 # Workspace navigation (similar to your i3 tab bindings)
 alt-tab = 'workspace-back-and-forth'
@@ -80,26 +72,26 @@ alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
 
 # Enter service mode (for additional commands)
-alt-shift-semicolon = 'exec-and-forget bash -c "aerospace mode service; sketchybar --trigger aerospace_mode_change INFO=service"'
+alt-shift-semicolon = 'mode service'
 
 [mode.service.binding]
 # Exit service mode
-esc = ['reload-config', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
+esc = ['reload-config', 'mode main']
 
 # Reset layout
-r = ['flatten-workspace-tree', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
+r = ['flatten-workspace-tree', 'mode main']
 
 # Layout toggles
-f = ['layout floating tiling', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
+f = ['layout floating tiling', 'mode main']
 
 # Close all windows except current
-backspace = ['close-all-windows-but-current', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
+backspace = ['close-all-windows-but-current', 'mode main']
 
 # Window joining
-alt-shift-h = ['join-with left', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
-alt-shift-j = ['join-with down', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
-alt-shift-k = ['join-with up', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
-alt-shift-l = ['join-with right', 'mode main', 'exec-and-forget sketchybar --trigger aerospace_mode_change']
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'

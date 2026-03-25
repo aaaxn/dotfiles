@@ -57,9 +57,6 @@ brew install starship zsh-autosuggestions zsh-autocomplete
 brew tap nikitabobko/tap
 brew install nikitabobko/tap/aerospace
 
-brew tap felixkratz/formulae
-brew install felixkratz/formulae/sketchybar
-
 brew install --cask ghostty
 brew install --cask karabiner-elements
 
@@ -79,7 +76,6 @@ link_item "$REPO_DIR/config/zsh/conf.d"     "$HOME/.config/zsh/conf.d"
 link_item "$MAC_DIR/home/.zshrc"            "$HOME/.zshrc"
 link_item "$MAC_DIR/home/.zprofile"         "$HOME/.zprofile"
 link_item "$MAC_DIR/config/aerospace.toml"  "$HOME/.aerospace.toml"
-link_item "$MAC_DIR/config/sketchybar"      "$HOME/.config/sketchybar"
 link_item "$MAC_DIR/config/ghostty"         "$HOME/.config/ghostty"
 link_item "$MAC_DIR/config/karabiner"       "$HOME/.config/karabiner"
 
