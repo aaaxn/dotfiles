@@ -1,6 +1,6 @@
 font-size = 14
 # font-family = SauceCodePro Nerd Font
-font-family = JetBrainsMono Nerd Font
+font-family = CaskaydiaMonoNerdFontMono
 
 # font-family-bold = SauceCodePro Nerd Font
 # font-family-italic = SauceCodePro Nerd Font
@@ -9,16 +9,27 @@ font-family = JetBrainsMono Nerd Font
 theme = Catppuccin Mocha
 title = "妖怪"
 term = xterm-256color
+macos-titlebar-style = tabs
 
 
-background-image = ~/Downloads/wallhaven-jewvzy.jpg
+background-image = ~/Downloads/wall12.png
 background-image-opacity = 0.2
 background-image-fit = cover
+background-blur = true
 
 shell-integration-features = ssh-env
 
 # Trata Option esquerdo como Alt (Meta) para tmux/shell remotos via SSH.
 macos-option-as-alt = left
 
+scrollback-limit = 10000
+mouse-scroll-multiplier = 3
+
 keybind = cmd+r=reload_config
 keybind = cmd+t=new_window
+keybind = shift+page_up=scroll_page_up
+keybind = shift+page_down=scroll_page_down
+keybind = cmd+up=scroll_page_up
+keybind = cmd+down=scroll_page_down
+keybind = cmd+home=scroll_to_top
+keybind = cmd+end=scroll_to_bottom
