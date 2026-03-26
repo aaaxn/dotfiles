@@ -1,21 +1,17 @@
+font-family = JetBrainsMono Nerd Font
 font-size = 14
-# font-family = SauceCodePro Nerd Font
-font-family = CaskaydiaMonoNerdFontMono
-
-# font-family-bold = SauceCodePro Nerd Font
-# font-family-italic = SauceCodePro Nerd Font
-# font-family-bold-italic = SauceCodePro Nerd Font
+font-thicken = true
 
 theme = Catppuccin Mocha
-title = "妖怪"
-term = xterm-256color
 macos-titlebar-style = tabs
+macos-titlebar-proxy-icon = hidden
+term = xterm-256color
 
+window-colorspace = display-p3
 
-background-image = ~/Downloads/wall12.png
-background-image-opacity = 0.2
+background-image = ~/Downloads/wall11.png
 background-image-fit = cover
-background-blur = true
+background-image-opacity = 0.2
 
 shell-integration-features = ssh-env
 
@@ -33,3 +29,4 @@ keybind = cmd+up=scroll_page_up
 keybind = cmd+down=scroll_page_down
 keybind = cmd+home=scroll_to_top
 keybind = cmd+end=scroll_to_bottom
+keybind = shift+enter=text:\n
