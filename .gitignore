@@ -1,5 +1,2 @@
-config/tmux/themes/repos/
-
-# mac — generated/binary files
-mac/config/karabiner/automatic_backups/
-
+tmux/.config/tmux/themes/repos/
+karabiner/.config/karabiner/automatic_backups/

@@ -1,7 +1,4 @@
-if [[ -f "$HOME/.local/bin/env" ]]; then
-  source "$HOME/.local/bin/env"
-fi
-
+# ── Antidote plugin manager ───────────────────────────────────────────────────
 if [[ -f "$HOME/.antidote/antidote.zsh" ]]; then
   source "$HOME/.antidote/antidote.zsh"
 fi
@@ -12,28 +9,30 @@ elif [[ -f "$HOME/.zsh_plugins.txt" ]]; then
   antidote load "$HOME/.zsh_plugins.txt"
 fi
 
+# ── Shared settings ──────────────────────────────────────────────────────────
+if [[ -f "$HOME/.local/bin/env" ]]; then
+  source "$HOME/.local/bin/env"
+fi
 
-# Let uv default to each project's local .venv.
 unset UV_PROJECT_ENVIRONMENT
-
-
-
-
 
 export TZ="America/Sao_Paulo"
 
 # Codex in tmux can fail to infer the terminal background when COLORFGBG is unset.
-# Provide a dark-background fallback only for tmux sessions.
 if [[ -n "$TMUX" && -z "$COLORFGBG" ]]; then
   export COLORFGBG="15;0"
 fi
 
-alias tma='/usr/local/bin/tmux attach-session -t'
-alias tms='/usr/local/bin/tmux new -s'
-alias tmls='/usr/local/bin/tmux ls'
+# ── Aliases ──────────────────────────────────────────────────────────────────
+alias tma='tmux a -t'
+alias tms='tmux new -s'
+alias tmls='tmux ls'
 alias oc='opencode'
 alias cc='claude --dangerously-skip-permissions'
 alias codex='codex --yolo'
+alias tmux-prefix='$HOME/.config/tmux/scripts/tmux-prefix.sh'
+
+# ── Functions ────────────────────────────────────────────────────────────────
 codex-ns() {
   local base_link="$HOME/.agents/skills/superpowers"
   local tmp_root="$HOME/.codex/tmp"
@@ -69,12 +68,12 @@ codex-ns() {
   rm -rf "$tmp_home"
   return $rc
 }
-alias tmux-prefix='$HOME/.config/tmux/scripts/tmux-prefix.sh'
 
+# ── Platform-specific ────────────────────────────────────────────────────────
+_platform_file="$HOME/.config/zsh/platform.d/$(uname -s | tr '[:upper:]' '[:lower:]').zsh"
+[[ -f "$_platform_file" ]] && source "$_platform_file"
+unset _platform_file
+
+# ── Starship ─────────────────────────────────────────────────────────────────
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
-
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
-
-. "$HOME/.local/share/../bin/env"
-export PATH="/home/linuxbrew/.linuxbrew/opt/node@24/bin:$PATH"
