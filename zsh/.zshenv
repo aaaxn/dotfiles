@@ -1,3 +1,4 @@
+skip_global_compinit=1
 export BUN_INSTALL="$HOME/.bun"
 
 case ":${PATH}:" in

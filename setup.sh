@@ -30,7 +30,7 @@ STOW_OPTS=("--target=$HOME" "--restow" "--verbose=1")
 [[ -L "$HOME/.gitconfig" ]] && rm "$HOME/.gitconfig"
 
 # ── Phase 2: Stow cross-platform packages ───────────────────────────────────
-cross_platform=(zsh git tmux starship gitmux codex)
+cross_platform=(zsh git tmux starship gitmux codex claude)
 
 for pkg in "${cross_platform[@]}"; do
   echo "Stowing: $pkg"

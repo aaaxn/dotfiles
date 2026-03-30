@@ -1,3 +1,6 @@
+# ── Shared brew: allow completions from group-writable dirs ──────────────────
+zstyle ':zephyr:plugin:completion' disable-compfix yes
+
 # ── Antidote plugin manager ───────────────────────────────────────────────────
 if [[ -f "$HOME/.antidote/antidote.zsh" ]]; then
   source "$HOME/.antidote/antidote.zsh"
