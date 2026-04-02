@@ -2,6 +2,7 @@
 # ghostty-bg — switch Ghostty background: wallpaper, transparency, or none
 
 GHOSTTY_CONFIG="${HOME}/dotfiles/ghostty/.config/ghostty/config"
+RELOAD_MSG="Reload: cmd+r"
 
 usage() {
     cat <<EOF
@@ -19,68 +20,88 @@ EOF
 
 _python_edit() {
     python3 - "$GHOSTTY_CONFIG" "$@" <<'PYEOF'
-import sys, re
+import sys, re, os
 
 config_file = sys.argv[1]
 mode = sys.argv[2]
 
-with open(config_file, 'r') as f:
-    content = f.read()
+try:
+    with open(config_file, 'r') as f:
+        content = f.read()
+except OSError as e:
+    print(f"Error reading config: {e}", file=sys.stderr)
+    sys.exit(1)
+
+BG_KEYS_RE = re.compile(
+    r'^(background-image|background-image-fit|background-image-opacity|background-opacity)\s*=.*\n?',
+    re.MULTILINE
+)
 
 def remove_bg_keys(text):
-    for key in ('background-image', 'background-image-fit',
-                'background-image-opacity', 'background-opacity'):
-        text = re.sub(rf'^{key}\s*=.*\n?', '', text, flags=re.MULTILINE)
-    return text
+    return BG_KEYS_RE.sub('', text)
+
+def append_setting(text, setting):
+    return text.rstrip('\n') + '\n' + setting + '\n'
 
 if mode == 'set':
-    img = sys.argv[3]
+    img = os.path.expanduser(sys.argv[3])
+    if not os.path.isfile(img):
+        print(f"Error: not found: {img}", file=sys.stderr)
+        sys.exit(1)
+    rel = '~' + img[len(os.path.expanduser('~')):]
     content = remove_bg_keys(content)
-    block = (f"\nbackground-image = {img}\n"
-             f"background-image-fit = cover\n"
-             f"background-image-opacity = 0.2\n")
-    content = content.rstrip('\n') + '\n' + block
+    content = append_setting(content,
+        f"background-image = {rel}\n"
+        f"background-image-fit = cover\n"
+        f"background-image-opacity = 0.2")
 
 elif mode == 'clear':
     content = remove_bg_keys(content)
-    content = content.rstrip('\n') + '\nbackground-opacity = 0.85\n'
+    content = append_setting(content, 'background-opacity = 0.85')
 
 elif mode == 'opacity':
     op = sys.argv[3]
-    if re.search(r'^background-image-opacity\s*=', content, flags=re.MULTILINE):
-        content = re.sub(r'^background-image-opacity\s*=.*',
-                         f'background-image-opacity = {op}', content, flags=re.MULTILINE)
-    elif re.search(r'^background-opacity\s*=', content, flags=re.MULTILINE):
-        content = re.sub(r'^background-opacity\s*=.*',
-                         f'background-opacity = {op}', content, flags=re.MULTILINE)
-    else:
-        content = content.rstrip('\n') + f'\nbackground-image-opacity = {op}\n'
+    new, n = re.subn(r'^background-image-opacity\s*=.*', f'background-image-opacity = {op}',
+                     content, flags=re.MULTILINE)
+    if n == 0:
+        new, n = re.subn(r'^background-opacity\s*=.*', f'background-opacity = {op}',
+                         content, flags=re.MULTILINE)
+    content = new if n > 0 else append_setting(content, f'background-image-opacity = {op}')
 
-with open(config_file, 'w') as f:
-    f.write(content)
+try:
+    with open(config_file, 'w') as f:
+        f.write(content)
+except OSError as e:
+    print(f"Error writing config: {e}", file=sys.stderr)
+    sys.exit(1)
 PYEOF
+}
+
+_validate_opacity() {
+    python3 -c "
+v = float('$1')
+exit(0 if 0.0 <= v <= 1.0 else 1)
+" 2>/dev/null || { echo "Error: opacity must be a number between 0 and 1"; exit 1; }
 }
 
 case "${1:-}" in
     set)
         [[ -z "$2" ]] && { usage; exit 1; }
-        img="${2/#\~/$HOME}"
-        [[ ! -f "$img" ]] && { echo "Error: not found: $img"; exit 1; }
-        rel="${img/#$HOME/\~}"
-        _python_edit set "$rel"
-        echo "Wallpaper: $rel"
-        echo "Reload: cmd+r"
+        _python_edit set "$2"
+        echo "Wallpaper: ${2/#$HOME/~}"
+        echo "$RELOAD_MSG"
         ;;
     clear)
         _python_edit clear
         echo "Transparency mode (opacity 0.85, no image)"
-        echo "Reload: cmd+r"
+        echo "$RELOAD_MSG"
         ;;
     opacity)
         [[ -z "$2" ]] && { usage; exit 1; }
+        _validate_opacity "$2"
         _python_edit opacity "$2"
         echo "Opacity set to $2"
-        echo "Reload: cmd+r"
+        echo "$RELOAD_MSG"
         ;;
     status)
         echo "=== Ghostty background ==="
