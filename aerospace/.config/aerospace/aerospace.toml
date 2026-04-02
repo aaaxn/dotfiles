@@ -1,15 +1,16 @@
 start-at-login = true
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
+accordion-padding = 30
 
 # Gaps configuration
 [gaps]
 inner.horizontal = 7
 inner.vertical = 7
-outer.left = 20
-outer.bottom = 20
-outer.top = 20
-outer.right = 20
+outer.left = 7
+outer.bottom = 7
+outer.top = 7
+outer.right = 7
 
 [key-mapping]
 preset = 'qwerty'
@@ -58,7 +59,7 @@ alt-shift-0 = 'move-node-to-workspace 10'
 alt-e = 'layout tiles horizontal'  # horizontal split
 alt-v = 'layout tiles vertical'    # vertical split
 alt-w = 'layout accordion'  # accordion layout (fullscreen-like)
-alt-f = ['mode service', 'layout floating tiling']  # toggle floating
+alt-f = 'layout floating tiling'  # toggle floating
 
 # Workspace navigation (similar to your i3 tab bindings)
 alt-tab = 'workspace-back-and-forth'
