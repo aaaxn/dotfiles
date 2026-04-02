@@ -9,9 +9,10 @@ term = xterm-256color
 
 window-colorspace = display-p3
 
-background-image = ~/Downloads/wall11.png
-background-image-fit = cover
-background-image-opacity = 0.2
+# Background: use ghostty-bg to switch between wallpaper and transparency
+# ghostty-bg set ~/path/to/image.png  →  wallpaper
+# ghostty-bg clear                    →  transparency
+background-opacity = 0.85
 
 shell-integration-features = ssh-env
 
