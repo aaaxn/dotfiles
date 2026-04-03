@@ -75,4 +75,23 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
   "$DOTFILES/scripts/set-default-shell-zsh.sh" || true
 fi
 
+# ── Phase 5: Claude Code plugins ─────────────────────────────────────────────
+if command -v claude >/dev/null 2>&1; then
+  plugins_json="$DOTFILES/.claude/plugins/installed_plugins.json"
+  if [[ -f "$plugins_json" ]]; then
+    # Extract "name@marketplace" keys from installed_plugins.json
+    while IFS= read -r plugin; do
+      echo "Installing Claude plugin: $plugin"
+      claude plugins install "$plugin" 2>/dev/null || true
+    done < <(python3 -c "
+import json, sys
+data = json.load(open('$plugins_json'))
+for key in data.get('plugins', {}):
+    print(key)
+")
+  fi
+else
+  echo "claude not found — skipping plugin install"
+fi
+
 echo "Done."
