@@ -1,3 +1,4 @@
+export ZDOTDIR="$HOME/.config/zsh"
 skip_global_compinit=1
 export BUN_INSTALL="$HOME/.bun"
 

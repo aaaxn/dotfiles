@@ -26,11 +26,14 @@ link ".config/tmux" ".config/tmux"
 # git — link just config; ignore and other files may exist alongside it
 link ".config/git/config" ".config/git/config"
 
-# zsh — link subdirs; ~/.config/zsh itself may contain other things
-link ".config/zsh/conf.d"     ".config/zsh/conf.d"
-link ".config/zsh/platform.d" ".config/zsh/platform.d"
+# zsh — ZDOTDIR points here; link the whole dir
+link ".config/zsh" ".config/zsh"
+
+# .zshenv must live at ~/ (zsh reads it before ZDOTDIR is set)
+link ".zshenv" ".zshenv"
 
 link ".config/starship.toml" ".config/starship.toml"
+link ".config/gitmux/.gitmux.conf" ".gitmux.conf"
 
 # claude — config files + plugins manifest + custom skills
 link ".claude/keybindings.json"                ".claude/keybindings.json"
@@ -51,11 +54,6 @@ ln -sfn "$HOME/.agents/skills/grill-me" "$HOME/.claude/skills/grill-me"
 # codex
 link ".codex/config.toml" ".codex/config.toml"
 
-link ".gitmux.conf"     ".gitmux.conf"
-link ".zshrc"           ".zshrc"
-link ".zprofile"        ".zprofile"
-link ".zshenv"          ".zshenv"
-link ".zsh_plugins.txt" ".zsh_plugins.txt"
 
 # ── Phase 3: macOS-specific ──────────────────────────────────────────────────
 if [[ "$(uname -s)" == "Darwin" ]]; then

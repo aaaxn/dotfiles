@@ -6,10 +6,10 @@ if [[ -f "$HOME/.antidote/antidote.zsh" ]]; then
   source "$HOME/.antidote/antidote.zsh"
 fi
 
-if [[ -f "$HOME/.zsh_plugins.zsh" ]]; then
-  source "$HOME/.zsh_plugins.zsh"
-elif [[ -f "$HOME/.zsh_plugins.txt" ]]; then
-  antidote load "$HOME/.zsh_plugins.txt"
+if [[ -f "$ZDOTDIR/.zsh_plugins.zsh" ]]; then
+  source "$ZDOTDIR/.zsh_plugins.zsh"
+elif [[ -f "$ZDOTDIR/.zsh_plugins.txt" ]]; then
+  antidote load "$ZDOTDIR/.zsh_plugins.txt"
 fi
 
 # ── Shared settings ──────────────────────────────────────────────────────────
