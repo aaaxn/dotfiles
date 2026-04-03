@@ -32,11 +32,24 @@ link ".config/zsh/platform.d" ".config/zsh/platform.d"
 
 link ".config/starship.toml" ".config/starship.toml"
 
-# claude + codex — real app dirs; link only the config files we own
-link ".claude/keybindings.json"      ".claude/keybindings.json"
-link ".claude/settings.json"         ".claude/settings.json"
-link ".claude/statusline-command.sh" ".claude/statusline-command.sh"
-link ".codex/config.toml"            ".codex/config.toml"
+# claude — config files + plugins manifest + custom skills
+link ".claude/keybindings.json"                ".claude/keybindings.json"
+link ".claude/settings.json"                   ".claude/settings.json"
+link ".claude/statusline-command.sh"           ".claude/statusline-command.sh"
+link ".claude/plugins/installed_plugins.json"  ".claude/plugins/installed_plugins.json"
+link ".claude/skills/ruff"                     ".claude/skills/ruff"
+link ".claude/skills/ty"                       ".claude/skills/ty"
+link ".claude/skills/uv"                       ".claude/skills/uv"
+
+# shared agent skills (claude + codex)
+link ".agents/skills/ast-grep"  ".agents/skills/ast-grep"
+link ".agents/skills/grill-me" ".agents/skills/grill-me"
+# symlink shared skills into claude's skill dir
+ln -sfn "$HOME/.agents/skills/ast-grep"  "$HOME/.claude/skills/ast-grep"
+ln -sfn "$HOME/.agents/skills/grill-me" "$HOME/.claude/skills/grill-me"
+
+# codex
+link ".codex/config.toml" ".codex/config.toml"
 
 link ".gitmux.conf"     ".gitmux.conf"
 link ".zshrc"           ".zshrc"
