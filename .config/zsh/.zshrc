@@ -80,3 +80,6 @@ unset _platform_file
 # ── Starship ─────────────────────────────────────────────────────────────────
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
+
+# bun completions
+[ -s "/Users/arturxavier/.bun/_bun" ] && source "/Users/arturxavier/.bun/_bun"
