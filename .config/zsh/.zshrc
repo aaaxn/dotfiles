@@ -77,5 +77,7 @@ export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
 # ── Plugins (must be at the end) ─────────────────────────────────────────────
-source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[[ -f "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+  source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+  source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
