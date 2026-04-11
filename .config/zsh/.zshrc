@@ -1,18 +1,13 @@
-# ── Shared brew: allow completions from group-writable dirs ──────────────────
-zstyle ':zephyr:plugin:completion' disable-compfix yes
+# ── Completion ───────────────────────────────────────────────────────────────
+autoload -Uz compinit && compinit
 
-# ── Antidote plugin manager ───────────────────────────────────────────────────
-if [[ -f "$HOME/.antidote/antidote.zsh" ]]; then
-  source "$HOME/.antidote/antidote.zsh"
-fi
+# ── History ──────────────────────────────────────────────────────────────────
+HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+setopt HIST_IGNORE_DUPS SHARE_HISTORY
 
-if [[ -f "$ZDOTDIR/.zsh_plugins.zsh" ]]; then
-  source "$ZDOTDIR/.zsh_plugins.zsh"
-elif [[ -f "$ZDOTDIR/.zsh_plugins.txt" ]]; then
-  antidote load "$ZDOTDIR/.zsh_plugins.txt"
-fi
-
-# ── Shared settings ──────────────────────────────────────────────────────────
+# ── Shared settings ─────────────────────────────────────────────────────────
 if [[ -f "$HOME/.local/bin/env" ]]; then
   source "$HOME/.local/bin/env"
 fi
@@ -81,5 +76,6 @@ unset _platform_file
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
-# bun completions
-[ -s "/Users/arturxavier/.bun/_bun" ] && source "/Users/arturxavier/.bun/_bun"
+# ── Plugins (must be at the end) ─────────────────────────────────────────────
+source "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

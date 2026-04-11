@@ -176,20 +176,23 @@ install_starship() {
   log "starship installed to $HOME/.local/bin"
 }
 
-install_antidote() {
-  local dest="$HOME/.antidote"
+install_zsh_plugin() {
+  local repo="$1"
+  local name="${repo##*/}"
+  local dest="$HOME/.zsh/$name"
   if [[ -d "$dest/.git" ]]; then
-    log "antidote already installed"
+    log "$name already installed"
     return
   fi
 
   if ! need_cmd git; then
-    log "git not found; cannot install antidote"
+    log "git not found; cannot install $name"
     return 1
   fi
 
-  git clone --depth 1 https://github.com/mattmc3/antidote.git "$dest"
-  log "antidote installed"
+  mkdir -p "$HOME/.zsh"
+  git clone --depth 1 "https://github.com/$repo.git" "$dest"
+  log "$name installed"
 }
 
 install_tpm() {
@@ -211,9 +214,10 @@ install_tpm() {
 
 log "Bootstrapping dotfiles dependencies"
 
-ensure_packages git zsh tmux curl wget
 install_homebrew
 maybe_eval_brew_shellenv
+
+ensure_packages git zsh tmux curl wget
 
 ensure_packages fzf
 
@@ -223,7 +227,8 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
 fi
 
 install_starship
-install_antidote
+install_zsh_plugin zsh-users/zsh-autosuggestions
+install_zsh_plugin zsh-users/zsh-syntax-highlighting
 install_tpm
 
 log "Done."

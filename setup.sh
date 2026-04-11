@@ -7,6 +7,7 @@ link() {
   local src="$DOTFILES/$1"
   local dst="$HOME/$2"
   mkdir -p "$(dirname "$dst")"
+  [[ -d "$dst" && ! -L "$dst" ]] && mv "$dst" "$dst.bak.$(date +%s)"
   ln -sfn "$src" "$dst"
   echo "linked: $dst"
 }
@@ -35,29 +36,11 @@ link ".zshenv" ".zshenv"
 link ".config/starship.toml" ".config/starship.toml"
 link ".config/gitmux/.gitmux.conf" ".gitmux.conf"
 
-# claude — config files + plugins manifest + custom skills
-link ".claude/keybindings.json"                ".claude/keybindings.json"
-link ".claude/settings.json"                   ".claude/settings.json"
-link ".claude/statusline-command.sh"           ".claude/statusline-command.sh"
-link ".claude/skills/ruff"                     ".claude/skills/ruff"
-link ".claude/skills/ty"                       ".claude/skills/ty"
-link ".claude/skills/uv"                       ".claude/skills/uv"
-
-# shared agent skills (claude + codex)
-link ".agents/skills/ast-grep"  ".agents/skills/ast-grep"
-link ".agents/skills/grill-me" ".agents/skills/grill-me"
-# symlink shared skills into claude's skill dir
-ln -sfn "$HOME/.agents/skills/ast-grep"  "$HOME/.claude/skills/ast-grep"
-ln -sfn "$HOME/.agents/skills/grill-me" "$HOME/.claude/skills/grill-me"
-
-# codex
-link ".codex/config.toml" ".codex/config.toml"
-
 
 # ── Phase 3: macOS-specific ──────────────────────────────────────────────────
 if [[ "$(uname -s)" == "Darwin" ]]; then
   echo "Installing macOS packages..."
-  brew install starship zsh-autosuggestions zsh-autocomplete
+  brew install starship
   brew tap nikitabobko/tap
   brew install nikitabobko/tap/aerospace
   brew install --cask ghostty karabiner-elements

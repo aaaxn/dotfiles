@@ -1,21 +1,14 @@
-# zsh-autosuggestions (via brew)
-[[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
-  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
+# ── Plugin config ────────────────────────────────────────────────────────────
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=cyan,bold,underline"
 ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
   history-beginning-search-backward-end
   history-beginning-search-forward-end
 )
 
-# zsh-autocomplete (via brew)
-[[ -f "$HOMEBREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && \
-  source "$HOMEBREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-
 bindkey "^[[A" history-beginning-search-backward-end
 bindkey "^[[B" history-beginning-search-forward-end
 
-# AeroSpace shortcuts cheatsheet
+# ── AeroSpace shortcuts cheatsheet ──────────────────────────────────────────
 _aerokey_print() {
   local cfg="${AEROKEY_CONFIG:-$HOME/.config/aerospace/aerospace.toml}"
 
