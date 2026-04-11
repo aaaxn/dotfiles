@@ -1,8 +1,13 @@
 # ── Completion ───────────────────────────────────────────────────────────────
-autoload -Uz compinit && compinit
+autoload -Uz compinit
+_zsh_cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+mkdir -p "$_zsh_cache_dir"
+compinit -d "$_zsh_cache_dir/zcompdump-${ZSH_VERSION}"
+unset _zsh_cache_dir
 
 # ── History ──────────────────────────────────────────────────────────────────
-HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/zsh"
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
 HISTSIZE=10000
 SAVEHIST=10000
 setopt HIST_IGNORE_DUPS SHARE_HISTORY
@@ -28,7 +33,6 @@ alias tmls='tmux ls'
 alias oc='opencode'
 alias cc='claude --dangerously-skip-permissions'
 alias codex='codex --yolo'
-alias tmux-prefix='$HOME/.config/tmux/scripts/tmux-prefix.sh'
 
 # ── Platform-specific ────────────────────────────────────────────────────────
 _platform_file="$HOME/.config/zsh/platform.d/$(uname -s | tr '[:upper:]' '[:lower:]').zsh"

@@ -6,14 +6,33 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 link() {
   local src="$DOTFILES/$1"
   local dst="$HOME/$2"
+  local backup=""
+  local current_target=""
+
   mkdir -p "$(dirname "$dst")"
-  [[ -d "$dst" && ! -L "$dst" ]] && mv "$dst" "$dst.bak.$(date +%s)"
+
+  if [[ -L "$dst" ]]; then
+    current_target="$(readlink "$dst")"
+    if [[ "$current_target" == "$src" ]]; then
+      echo "linked: $dst"
+      return
+    fi
+  elif [[ -e "$dst" ]]; then
+    backup="$dst.bak.$(date +%s)"
+    mv "$dst" "$backup"
+    echo "backed up: $dst -> $backup"
+  fi
+
   ln -sfn "$src" "$dst"
   echo "linked: $dst"
 }
 
 # ── Phase 1: Bootstrap ───────────────────────────────────────────────────────
 "$DOTFILES/scripts/bootstrap.sh"
+
+# Clean up stale generated zsh artifacts kept inside the repo from older layouts
+rm -f "$DOTFILES/.config/zsh/.zcompdump"*
+rm -f "$DOTFILES/.config/zsh/.zsh_history"
 
 # Clean up stale symlinks from previous layouts
 for _old in "$HOME/.tmux.conf" "$HOME/.gitconfig" \

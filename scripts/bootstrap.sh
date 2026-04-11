@@ -20,6 +20,11 @@ maybe_eval_brew_shellenv() {
 }
 
 install_homebrew() {
+  if [[ "$(uname -s)" != "Darwin" ]]; then
+    log "Skipping Homebrew installation on non-macOS"
+    return 0
+  fi
+
   if need_cmd brew; then
     log "homebrew already installed"
     return
