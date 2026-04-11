@@ -15,9 +15,17 @@ link() {
 # ── Phase 1: Bootstrap ───────────────────────────────────────────────────────
 "$DOTFILES/scripts/bootstrap.sh"
 
-# Clean up old stow-era symlinks
-[[ -L "$HOME/.tmux.conf" ]] && rm "$HOME/.tmux.conf"
-[[ -L "$HOME/.gitconfig" ]] && rm "$HOME/.gitconfig"
+# Clean up stale symlinks from previous layouts
+for _old in "$HOME/.tmux.conf" "$HOME/.gitconfig" \
+            "$HOME/.claude/keybindings.json" "$HOME/.claude/settings.json" \
+            "$HOME/.claude/statusline-command.sh" \
+            "$HOME/.claude/skills/ruff" "$HOME/.claude/skills/ty" "$HOME/.claude/skills/uv" \
+            "$HOME/.claude/skills/ast-grep" "$HOME/.claude/skills/grill-me" \
+            "$HOME/.codex/config.toml" \
+            "$HOME/.agents/skills/ast-grep" "$HOME/.agents/skills/grill-me"; do
+  [[ -L "$_old" ]] && rm "$_old"
+done
+unset _old
 
 # ── Phase 2: Cross-platform symlinks ─────────────────────────────────────────
 

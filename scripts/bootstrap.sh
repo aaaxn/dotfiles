@@ -214,10 +214,11 @@ install_tpm() {
 
 log "Bootstrapping dotfiles dependencies"
 
+ensure_packages git curl
 install_homebrew
 maybe_eval_brew_shellenv
 
-ensure_packages git zsh tmux curl wget
+ensure_packages zsh tmux wget
 
 ensure_packages fzf
 
