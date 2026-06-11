@@ -161,30 +161,28 @@ ensure_optional_cmd_pkg() {
   fi
 }
 
-install_starship() {
-  if need_cmd starship; then
-    log "starship already installed"
+install_oh_my_zsh() {
+  if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    log "oh-my-zsh already installed"
     return
   fi
 
-  mkdir -p "$HOME/.local/bin"
-
-  if need_cmd curl; then
-    curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
-  elif need_cmd wget; then
-    wget -qO- https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
-  else
-    log "Neither curl nor wget found. Cannot install starship."
+  if ! need_cmd curl; then
+    log "curl not found; cannot install oh-my-zsh"
     return 1
   fi
 
-  log "starship installed to $HOME/.local/bin"
+  log "Installing oh-my-zsh"
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 }
 
-install_zsh_plugin() {
+# Clone a repo into a destination dir (used for OMZ plugins and the Pure prompt)
+clone_repo() {
   local repo="$1"
+  local dest="$2"
   local name="${repo##*/}"
-  local dest="$HOME/.zsh/$name"
+
   if [[ -d "$dest/.git" ]]; then
     log "$name already installed"
     return
@@ -195,9 +193,15 @@ install_zsh_plugin() {
     return 1
   fi
 
-  mkdir -p "$HOME/.zsh"
+  mkdir -p "$(dirname "$dest")"
   git clone --depth 1 "https://github.com/$repo.git" "$dest"
   log "$name installed"
+}
+
+install_zsh_plugin() {
+  local repo="$1"
+  local name="${repo##*/}"
+  clone_repo "$repo" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/$name"
 }
 
 install_tpm() {
@@ -232,9 +236,10 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
   ensure_optional_cmd_pkg xclip xclip
 fi
 
-install_starship
+install_oh_my_zsh
 install_zsh_plugin zsh-users/zsh-autosuggestions
 install_zsh_plugin zsh-users/zsh-syntax-highlighting
+clone_repo sindresorhus/pure "$HOME/.zsh/pure"
 install_tpm
 
 log "Done."

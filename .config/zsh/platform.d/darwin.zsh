@@ -1,13 +1,3 @@
-# ── Plugin config ────────────────────────────────────────────────────────────
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=cyan,bold,underline"
-ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(
-  history-beginning-search-backward-end
-  history-beginning-search-forward-end
-)
-
-bindkey "^[[A" history-beginning-search-backward-end
-bindkey "^[[B" history-beginning-search-forward-end
-
 # ── AeroSpace shortcuts cheatsheet ──────────────────────────────────────────
 _aerokey_print() {
   local cfg="${AEROKEY_CONFIG:-$HOME/.config/aerospace/aerospace.toml}"

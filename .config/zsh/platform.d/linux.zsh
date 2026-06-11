@@ -3,5 +3,4 @@ if [[ -z "${HOMEBREW_PREFIX:-}" ]] && [[ -x /home/linuxbrew/.linuxbrew/bin/brew 
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 fi
 
-. "$HOME/.local/share/../bin/env" 2>/dev/null || true
 export PATH="/home/linuxbrew/.linuxbrew/opt/node@24/bin:$PATH"

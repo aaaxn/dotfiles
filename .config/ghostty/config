@@ -1,33 +1,11 @@
-font-family = JetBrainsMono Nerd Font
+# Theme
+theme = Aizen Dark
+
+# Font
+font-family = Maple Mono NF
 font-size = 14
-font-thicken = true
+font-thicken=true
 
-theme = Catppuccin Mocha
-macos-titlebar-style = tabs
-macos-titlebar-proxy-icon = hidden
-term = xterm-256color
-
-window-colorspace = display-p3
-
-# Background: use ghostty-bg to switch between wallpaper and transparency
-# ghostty-bg set ~/path/to/image.png  →  wallpaper
-# ghostty-bg clear                    →  transparency
-
-shell-integration-features = ssh-env
-
-# Trata Option esquerdo como Alt (Meta) para tmux/shell remotos via SSH.
-macos-option-as-alt = left
-
-scrollback-limit = 10000
-mouse-scroll-multiplier = 3
-
-keybind = cmd+r=reload_config
-keybind = cmd+t=new_window
-keybind = shift+page_up=scroll_page_up
-keybind = shift+page_down=scroll_page_down
-keybind = cmd+up=scroll_page_up
-keybind = cmd+down=scroll_page_down
-keybind = cmd+home=scroll_to_top
-keybind = cmd+end=scroll_to_bottom
-keybind = shift+enter=text:\n
-background-opacity = 0.85
+background-image = ~/.config/ghostty/background.png
+background-image-fit = cover
+background-image-opacity = 0.2

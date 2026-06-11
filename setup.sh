@@ -36,6 +36,7 @@ rm -f "$DOTFILES/.config/zsh/.zsh_history"
 
 # Clean up stale symlinks from previous layouts
 for _old in "$HOME/.tmux.conf" "$HOME/.gitconfig" \
+            "$HOME/.config/starship.toml" "$HOME/.config/git/config" \
             "$HOME/.claude/keybindings.json" "$HOME/.claude/settings.json" \
             "$HOME/.claude/statusline-command.sh" \
             "$HOME/.claude/skills/ruff" "$HOME/.claude/skills/ty" "$HOME/.claude/skills/uv" \
@@ -51,30 +52,40 @@ unset _old
 # tmux — safe to link as a whole dir (no app-managed files inside)
 link ".config/tmux" ".config/tmux"
 
-# git — link just config; ignore and other files may exist alongside it
-link ".config/git/config" ".config/git/config"
-
 # zsh — ZDOTDIR points here; link the whole dir
 link ".config/zsh" ".config/zsh"
 
 # .zshenv must live at ~/ (zsh reads it before ZDOTDIR is set)
 link ".zshenv" ".zshenv"
 
-link ".config/starship.toml" ".config/starship.toml"
 link ".config/gitmux/.gitmux.conf" ".gitmux.conf"
 
 
 # ── Phase 3: macOS-specific ──────────────────────────────────────────────────
 if [[ "$(uname -s)" == "Darwin" ]]; then
   echo "Installing macOS packages..."
-  brew install starship
-  brew tap nikitabobko/tap
-  brew install nikitabobko/tap/aerospace
-  brew install --cask ghostty karabiner-elements
+  # skip apps that are already present, whether installed via brew or manually
+  if [[ ! -d /Applications/AeroSpace.app ]] && ! brew list aerospace &>/dev/null; then
+    brew tap nikitabobko/tap
+    brew install nikitabobko/tap/aerospace
+  fi
+  if [[ ! -d /Applications/Ghostty.app ]] && ! brew list --cask ghostty &>/dev/null; then
+    brew install --cask ghostty
+  fi
+  if [[ ! -d /Applications/Karabiner-Elements.app ]] && ! brew list --cask karabiner-elements &>/dev/null; then
+    brew install --cask karabiner-elements
+  fi
 
   link ".config/aerospace" ".config/aerospace"
   link ".config/ghostty"   ".config/ghostty"
   link ".config/karabiner" ".config/karabiner"
+
+  # AeroSpace prefers ~/.aerospace.toml over ~/.config/aerospace — move a
+  # stale copy out of the way so the linked config wins
+  if [[ -f "$HOME/.aerospace.toml" && ! -L "$HOME/.aerospace.toml" ]]; then
+    mv "$HOME/.aerospace.toml" "$HOME/.aerospace.toml.bak.$(date +%s)"
+    echo "backed up: $HOME/.aerospace.toml (superseded by ~/.config/aerospace)"
+  fi
 fi
 
 # ── Phase 4: Linux-specific ──────────────────────────────────────────────────
